@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+#root {
+  @apply container mx-auto px-4 py-8 flex flex-col;
+}
