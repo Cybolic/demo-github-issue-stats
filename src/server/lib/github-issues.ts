@@ -5,11 +5,11 @@ import { fetchWithRetry } from './fetch-retry.js';
 /*
   Possible improvements:
 
-  - Use an access token to avoid rate limiting
   - Use GraphQL API for more efficient queries
   - Allow other string inputs like "owner/repo"
 */
 
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN ?? undefined;
 
 const parseGitHubUrl = (url: string): { owner: string; repo: string; } | null => {
   const match = url.match(/github\.com\/([^/]+)\/([^/]+)/);
@@ -37,6 +37,11 @@ const fetchRepoIssues = async (owner: string, repo: string, monthPeriod: number)
   const threeMonthsAgo = new Date();
   threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - monthPeriod);
   const sinceDate = threeMonthsAgo.toISOString().split('T')[0];
+  const headers: Record<string, string> = {};
+
+  if (GITHUB_TOKEN !== undefined) {
+    headers['Authorization'] = `token ${GITHUB_TOKEN}`;
+  }
 
   try {
     let allIssues: GitHubIssue[] = [];
@@ -47,7 +52,7 @@ const fetchRepoIssues = async (owner: string, repo: string, monthPeriod: number)
 
       const query = `repo:${owner}/${repo} is:issue (is:open OR closed:>=${sinceDate})`;
       const url = `https://api.github.com/search/issues?q=${encodeURIComponent(query)}&per_page=100&page=${page}&advanced_search=true`;
-      const response = await fetchWithRetry(url);
+      const response = await fetchWithRetry(url, headers);
       if (!response?.ok) {
         throw new Error(`HTTP ${response?.status}: ${response?.statusText}`);
       }

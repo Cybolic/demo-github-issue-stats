@@ -1,8 +1,12 @@
 // Fetch data with retry for rate-limiting
-export const fetchWithRetry = async (url: string): Promise<Response | undefined> => {
+export const fetchWithRetry = async (
+  url: string,
+  additionalHeaders?: Record<string, string>
+): Promise<Response | undefined> => {
   const headers: Record<string, string> = {
     'User-Agent': 'GitHub-Issue-Tracker',
-    'Accept': 'application/vnd.github.v3+json'
+    'Accept': 'application/vnd.github.v3+json',
+    ...additionalHeaders,
   };
 
   let done = false;

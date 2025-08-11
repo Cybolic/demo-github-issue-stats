@@ -26,7 +26,12 @@ npm start
 npm run dev
 ```
 
-# Quick test
+## If you have a GitHub Access Token, you can raise the rate-limit for requests. E.g.
+```bash
+env GITHUB_TOKEN='github_...' npm run dev
+```
+
+## Quick test
 Since it can take some time to fetch all issues, to get a quick overview you
 can try the following URLs which don't have that many issues:
 
