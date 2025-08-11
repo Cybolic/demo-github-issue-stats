@@ -27,9 +27,10 @@ router.post('/github-issues', apiValidation, async (req: Request, res: Response)
   console.log(`Analyzing ${repoUris.length} repositories...`);
 
   try {
-    const results = await Promise.all(repoUris.map( url =>
-      analyzeRepo(url, monthPeriod)
-    ));
+    const results = Array(repoUris.length);
+    for (const [index, url] of repoUris.entries()) {
+      results[index] = await analyzeRepo(url, monthPeriod);
+    } 
     res.json({
       success: true,
       data: results,
